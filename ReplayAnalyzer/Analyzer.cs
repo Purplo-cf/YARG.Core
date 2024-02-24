@@ -152,7 +152,8 @@ public class Analyzer
             case GameMode.FiveFretGuitar:
             {
                 // Reset the notes
-                var notes = _chart.GetFiveFretTrack(profile.CurrentInstrument).GetDifficulty(profile.CurrentDifficulty);
+                var notes = _chart.GetFiveFretTrack(profile.CurrentInstrument).Difficulties[profile.CurrentDifficulty];
+                profile.ApplyModifiers(notes);
                 foreach (var note in notes.Notes)
                 {
                     foreach (var subNote in note.ChordEnumerator())
@@ -171,7 +172,8 @@ public class Analyzer
             case GameMode.FiveLaneDrums:
             {
                 // Reset the notes
-                var notes = _chart.GetDrumsTrack(profile.CurrentInstrument).GetDifficulty(profile.CurrentDifficulty);
+                var notes = _chart.GetDrumsTrack(profile.CurrentInstrument).Difficulties[profile.CurrentDifficulty];
+                profile.ApplyModifiers(notes);
                 foreach (var note in notes.Notes)
                 {
                     foreach (var subNote in note.ChordEnumerator())
@@ -190,6 +192,9 @@ public class Analyzer
             {
                 // Get the notes
                 var notes = _chart.GetVocalsTrack(profile.CurrentInstrument).Parts[0].CloneAsInstrumentDifficulty();
+
+                // No idea how vocals applies modifiers lol
+                //profile.ApplyModifiers(notes);
 
                 // Create engine
                 return new YargVocalsEngine(
