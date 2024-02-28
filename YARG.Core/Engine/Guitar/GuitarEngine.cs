@@ -105,7 +105,7 @@ namespace YARG.Core.Engine.Guitar
             OnOverstrum?.Invoke();
         }
 
-        protected override bool HitNote(GuitarNote note)
+        protected override void HitNote(GuitarNote note)
         {
             note.SetHitState(true, true);
 
@@ -195,7 +195,6 @@ namespace YARG.Core.Engine.Guitar
 
             OnNoteHit?.Invoke(State.NoteIndex, note);
             State.NoteIndex++;
-            return true;
         }
 
         protected override void MissNote(GuitarNote note)
@@ -405,7 +404,7 @@ namespace YARG.Core.Engine.Guitar
                         RebaseProgressValues(State.CurrentTick);
                     }
 
-                    State.StarPowerWhammyTimer.Start(State.CurrentTime);
+                    StartTimer(ref State.StarPowerWhammyTimer, State.CurrentTime);
 
                     EventLogger.LogEvent(new TimerEngineEvent(State.CurrentTime)
                     {
