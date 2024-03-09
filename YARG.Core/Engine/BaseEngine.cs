@@ -13,7 +13,7 @@ namespace YARG.Core.Engine
 
         public int BaseScore { get; protected set; }
 
-        public EngineEventLogger? EventLogger { get; }
+        public EngineEventLogger EventLogger { get; } = new();
 
         public abstract BaseEngineState      BaseState      { get; }
         public abstract BaseEngineParameters BaseParameters { get; }
@@ -24,7 +24,7 @@ namespace YARG.Core.Engine
 
         protected List<SoloSection> Solos = new();
 
-        protected readonly Queue<GameInput> InputQueue;
+        protected readonly Queue<GameInput> InputQueue = new();
 
         private readonly List<double> _scheduledUpdates = new();
 
@@ -40,9 +40,6 @@ namespace YARG.Core.Engine
             SyncTrack = syncTrack;
             Resolution = syncTrack.Resolution;
             TreatChordAsSeparate = isChordSeparate;
-
-            EventLogger = new EngineEventLogger();
-            InputQueue = new Queue<GameInput>();
         }
 
         /// <summary>
