@@ -215,7 +215,7 @@ namespace YARG.Core.Chart
             var newNote = CloneWithoutChildNotes();
             foreach (var child in _childNotes)
             {
-                newNote.AddChildNote(child.CloneNote());
+                newNote.AddChildNote(child.Clone());
             }
 
             return newNote;
