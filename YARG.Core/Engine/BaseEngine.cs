@@ -87,22 +87,25 @@ namespace YARG.Core.Engine
 
         private void ProcessInputs(double time)
         {
-            while (InputQueue.TryDequeue(out var input))
+            while (InputQueue.TryPeek(out var input))
             {
+                // Stop here if the inputs are in the future
+                if (input.Time > time)
+                {
+                    YargLogger.LogFormatWarning(
+                        "Queued input is in the future! Time being updated to: {0}, input time: {1}", time, input.Time);
+                    break;
+                }
+
+                // Dequeue this here so inputs that don't meet the above condition aren't completely skipped
+                InputQueue.Dequeue();
+
                 // Skip inputs that are in the past
                 if (input.Time < BaseState.CurrentTime)
                 {
                     YargTrace.Fail(
                         $"Queued input is in the past! Current time: {BaseState.CurrentTime}, input time: {input.Time}");
                     continue;
-                }
-
-                // Skip inputs that are in the future
-                if (input.Time > time)
-                {
-                    YargLogger.LogFormatWarning(
-                        "Queued input is in the future! Time being updated to: {0}, input time: {1}", time, input.Time);
-                    break;
                 }
 
                 YargLogger.LogFormatTrace("Processing input {0} ({1}) update at {2}", input.GetAction<GuitarAction>(), input.Button, input.Time);
