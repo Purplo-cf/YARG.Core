@@ -88,7 +88,7 @@ namespace YARG.Core.Chart
             }
         }
 
-        // public InstrumentTrack<ProKeysNote> ProKeys { get; set; } = new(Instrument.ProKeys);
+        public InstrumentTrack<ProKeysNote> ProKeys { get; set; } = new(Instrument.ProKeys);
 
         public VocalsTrack Vocals { get; set; } = new(Instrument.Vocals);
         public VocalsTrack Harmony { get; set; } = new(Instrument.Harmony);
@@ -137,7 +137,7 @@ namespace YARG.Core.Chart
             ProBass_17Fret = loader.LoadProGuitarTrack(Instrument.ProBass_17Fret);
             ProBass_22Fret = loader.LoadProGuitarTrack(Instrument.ProBass_22Fret);
 
-            // ProKeys = loader.LoadProKeysTrack(Instrument.ProKeys);
+            ProKeys = loader.LoadProKeysTrack(Instrument.ProKeys);
 
             Vocals = loader.LoadVocalsTrack(Instrument.Vocals);
             Harmony = loader.LoadVocalsTrack(Instrument.Harmony);
@@ -301,7 +301,10 @@ namespace YARG.Core.Chart
             if (!song.ProBass_22Fret.IsEmpty)
                 ProBass_22Fret = song.ProBass_22Fret;
 
-            if (!song.Vocals.IsEmpty)
+            if (song.ProKeys.IsOccupied())
+                ProKeys = song.ProKeys;
+
+            if (song.Vocals.IsOccupied())
                 Vocals = song.Vocals;
 
             if (!song.Harmony.IsEmpty)
@@ -394,13 +397,18 @@ namespace YARG.Core.Chart
             double totalStartTime = 0;
 
             // Tracks
+
             totalStartTime = Math.Min(TrackMin(FiveFretTracks), totalStartTime);
             totalStartTime = Math.Min(TrackMin(SixFretTracks), totalStartTime);
             totalStartTime = Math.Min(TrackMin(DrumsTracks), totalStartTime);
             totalStartTime = Math.Min(TrackMin(ProGuitarTracks), totalStartTime);
+
+            totalStartTime = Math.Min(ProKeys.GetStartTime(), totalStartTime);
+
             totalStartTime = Math.Min(VoxMin(VocalsTracks), totalStartTime);
 
             // Global
+
             totalStartTime = Math.Min(Lyrics.GetStartTime(), totalStartTime);
 
             // Deliberately excluded, as they're not major contributors to the chart bounds
@@ -422,13 +430,18 @@ namespace YARG.Core.Chart
             double totalEndTime = 0;
 
             // Tracks
+
             totalEndTime = Math.Max(TrackMax(FiveFretTracks), totalEndTime);
             totalEndTime = Math.Max(TrackMax(SixFretTracks), totalEndTime);
             totalEndTime = Math.Max(TrackMax(DrumsTracks), totalEndTime);
             totalEndTime = Math.Max(TrackMax(ProGuitarTracks), totalEndTime);
+
+            totalEndTime = Math.Max(ProKeys.GetEndTime(), totalEndTime);
+
             totalEndTime = Math.Max(VoxMax(VocalsTracks), totalEndTime);
 
             // Global
+
             totalEndTime = Math.Max(Lyrics.GetEndTime(), totalEndTime);
 
             // Deliberately excluded, as they're not major contributors to the chart bounds
@@ -450,13 +463,18 @@ namespace YARG.Core.Chart
             uint totalFirstTick = 0;
 
             // Tracks
+
             totalFirstTick = Math.Min(TrackMin(FiveFretTracks), totalFirstTick);
             totalFirstTick = Math.Min(TrackMin(SixFretTracks), totalFirstTick);
             totalFirstTick = Math.Min(TrackMin(DrumsTracks), totalFirstTick);
             totalFirstTick = Math.Min(TrackMin(ProGuitarTracks), totalFirstTick);
+
+            totalFirstTick = Math.Min(ProKeys.GetFirstTick(), totalFirstTick);
+
             totalFirstTick = Math.Min(VoxMin(VocalsTracks), totalFirstTick);
 
             // Global
+
             totalFirstTick = Math.Min(Lyrics.GetFirstTick(), totalFirstTick);
 
             // Deliberately excluded, as they're not major contributors to the chart bounds
@@ -478,13 +496,18 @@ namespace YARG.Core.Chart
             uint totalLastTick = 0;
 
             // Tracks
+
             totalLastTick = Math.Max(TrackMax(FiveFretTracks), totalLastTick);
             totalLastTick = Math.Max(TrackMax(SixFretTracks), totalLastTick);
             totalLastTick = Math.Max(TrackMax(DrumsTracks), totalLastTick);
             totalLastTick = Math.Max(TrackMax(ProGuitarTracks), totalLastTick);
+
+            totalLastTick = Math.Max(ProKeys.GetLastTick(), totalLastTick);
+
             totalLastTick = Math.Max(VoxMax(VocalsTracks), totalLastTick);
 
             // Global
+
             totalLastTick = Math.Max(Lyrics.GetLastTick(), totalLastTick);
 
             // Deliberately excluded, as they're not major contributors to the chart bounds
