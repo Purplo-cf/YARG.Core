@@ -5,7 +5,7 @@ using YARG.Core.IO;
 
 namespace YARG.Core.Song.Cache
 {
-    public sealed class PackedCONGroup : CONGroup, IUpgradeGroup
+    public sealed class PackedCONGroup : CONGroup, IUpgradeGroup, IDisposable
     {
         public readonly AbridgedFileInfo Info;
         public readonly CONFileListing[] Listings;
@@ -87,6 +87,11 @@ namespace YARG.Core.Song.Cache
                 upgrade.Value.WriteToCache(writer);
             }
             return ms.ToArray();
+        }
+
+        public void Dispose()
+        {
+            Stream?.Dispose();
         }
     }
 }

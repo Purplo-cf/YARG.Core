@@ -81,7 +81,7 @@ namespace YARG.Core.Song.Cache
                     {
                         ScanCONGroup(group, reader, ScanPackedCONNode);
                     }
-                    group.Stream?.Dispose();
+                    group.Dispose();
                 }
                 );
             }
