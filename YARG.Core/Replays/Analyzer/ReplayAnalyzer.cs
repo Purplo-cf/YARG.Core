@@ -120,7 +120,7 @@ namespace YARG.Core.Replays.Analyzer
                     profile.ApplyModifiers(notes);
                     foreach (var note in notes.Notes)
                     {
-                        foreach (var subNote in note.ChordEnumerator())
+                        foreach (var subNote in note.AllNotes)
                         {
                             subNote.ResetNoteState();
                         }
@@ -142,7 +142,7 @@ namespace YARG.Core.Replays.Analyzer
                     profile.ApplyModifiers(notes);
                     foreach (var note in notes.Notes)
                     {
-                        foreach (var subNote in note.ChordEnumerator())
+                        foreach (var subNote in note.AllNotes)
                         {
                             subNote.ResetNoteState();
                         }
