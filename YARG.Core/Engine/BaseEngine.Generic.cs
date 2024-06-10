@@ -162,12 +162,8 @@ namespace YARG.Core.Engine
                 YargTrace.Fail($"Time cannot go backwards! Current time: {State.CurrentTime}, new time: {time}");
             }
 
-            // Only update the last time if the current time has changed
-            if (Math.Abs(time - State.CurrentTime) > double.Epsilon)
-            {
-                State.LastUpdateTime = State.CurrentTime;
-                State.LastTick = State.CurrentTick;
-            }
+            State.LastUpdateTime = State.CurrentTime;
+            State.LastTick = State.CurrentTick;
 
             State.CurrentTime = time;
             State.CurrentTick = GetCurrentTick(time);
@@ -439,11 +435,20 @@ namespace YARG.Core.Engine
 
         }
 
+        private uint ticksTaken = 0;
+        private uint startingAmount = 0;
+
         protected void DrainStarPower(uint tick)
         {
             uint drain = tick - State.LastTick;
+            ticksTaken += drain;
 
-            YargLogger.LogFormatDebug("Drain: {0} (at: {1})", drain, tick);
+            YargLogger.LogFormatDebug("Drain: {0} (at: {1}). Ticks taken: {2}", drain, tick, ticksTaken);
+
+            if (ticksTaken >= startingAmount)
+            {
+                YargLogger.LogFormatDebug("Took all ticks at {0}, ending SP", tick);
+            }
 
             int newAmount = (int)EngineStats.StarPowerTickAmount - (int)drain;
 
@@ -467,6 +472,7 @@ namespace YARG.Core.Engine
             var endTime = GetStarPowerEndTime(State.CurrentTick, EngineStats.StarPowerTickAmount);
             YargLogger.LogFormatDebug("Star Power activated at {0} ({1}), will end at {2} (tick: {3})", State.CurrentTime, State.CurrentTick, endTime, State.CurrentTick + EngineStats.StarPowerTickAmount);
 
+            startingAmount = EngineStats.StarPowerTickAmount;
             _spEndTime = endTime;
 
             RebaseProgressValues(State.CurrentTick);
@@ -593,7 +599,13 @@ namespace YARG.Core.Engine
         protected bool IsNoteInWindow(TNoteType note)
             => IsNoteInWindow(note, out _);
 
-        protected bool IsNoteInWindow(TNoteType note, out bool missed)
+        protected bool IsNoteInWindow(TNoteType note, double time) =>
+            IsNoteInWindow(note, out _, time);
+
+        protected bool IsNoteInWindow(TNoteType note, out bool missed) =>
+            IsNoteInWindow(note, out missed, State.CurrentTime);
+
+        protected bool IsNoteInWindow(TNoteType note, out bool missed, double time)
         {
             missed = false;
 
@@ -602,13 +614,13 @@ namespace YARG.Core.Engine
             double backend = EngineParameters.HitWindow.GetBackEnd(hitWindow);
 
             // Time has not reached the front end of this note
-            if (State.CurrentTime < note.Time + frontend)
+            if (time < note.Time + frontend)
             {
                 return false;
             }
 
             // Time has surpassed the back end of this note
-            if (State.CurrentTime > note.Time + backend)
+            if (time > note.Time + backend)
             {
                 missed = true;
                 return false;
